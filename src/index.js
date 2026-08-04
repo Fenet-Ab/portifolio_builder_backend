@@ -13,12 +13,14 @@ const publicPortfolioRoute = require("./modules/publicPortfolio/publicPortfolio.
 
 
 const express = require('express')
+const cors = require('cors')
 const app = express()
 const PORT = 5000
 
 
 
 // app api
+app.use(cors())
 app.use(express.json())
 // app.use("/api/admin", adminRoutes)
 app.use("/api/auth", authRoutes)

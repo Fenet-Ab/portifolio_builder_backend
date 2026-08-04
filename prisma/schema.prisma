@@ -1,85 +1,116 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
-// Get a free hosted Postgres database in seconds: `npx create-db`
-
 generator client {
   provider = "prisma-client-js"
-
 }
 
 datasource db {
   provider = "postgresql"
 }
 
-model Admin {
+model User {
   id        String   @id @default(uuid())
   name      String
   email     String   @unique
   password  String
+  username  String   @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  profile      Profile?
+  projects     Project[]
+  skills       Skill[]
+  experiences  Experience[]
+  certificates Certificate[]
+  socialLinks  SocialLink[]
+  blogPosts    BlogPost[]
 }
 
 model Profile {
-  id            String   @id @default(uuid())
-  fullName      String
-  title         String
-  bio           String
-  profileImage  String?
-  resumeUrl     String?
-  location      String?
-  email         String?
-  phone         String?
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  id           String   @id @default(uuid())
+  fullName     String
+  title        String
+  bio          String
+  profileImage String?
+  resumeUrl    String?
+  location     String?
+  email        String?
+  phone        String?
+  isPublished  Boolean  @default(false)
+  userId       String   @unique
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
+
 model Project {
-  id            String   @id @default(uuid())
-  title         String
-  description   String
-  imageUrl      String?
-  githubUrl     String?
-  demoUrl       String?
-  technologies  String[]
-  featured      Boolean  @default(false)
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  id           String   @id @default(uuid())
+  title        String
+  description  String
+  imageUrl     String?
+  githubUrl    String?
+  demoUrl      String?
+  technologies String[]
+  featured     Boolean  @default(false)
+  userId       String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
+
 model Skill {
-  id          String   @id @default(uuid())
-  name        String
-  category    String
-  level       String?
-  icon        String?
-  createdAt   DateTime @default(now())
+  id        String   @id @default(uuid())
+  name      String
+  category  String
+  level     String?
+  icon      String?
+  userId    String
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
+
 model Experience {
-  id          String   @id @default(uuid())
+  id          String    @id @default(uuid())
   company     String
   role        String
   description String
   startDate   DateTime
   endDate     DateTime?
-  current     Boolean @default(false)
-  createdAt   DateTime @default(now())
+  current     Boolean   @default(false)
+  userId      String
+  createdAt   DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
+
 model Certificate {
-  id          String   @id @default(uuid())
-  imageUrl    String?
-  title       String
-  issuer      String
-  issueDate   DateTime
+  id             String   @id @default(uuid())
+  imageUrl       String?
+  title          String
+  issuer         String
+  issueDate      DateTime
   certificateUrl String?
-  createdAt   DateTime @default(now())
+  userId         String
+  createdAt      DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
+
 model SocialLink {
   id        String   @id @default(uuid())
   platform  String
   url       String
   icon      String?
+  userId    String
   createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
+
 model ContactMessage {
   id        String   @id @default(uuid())
   name      String
@@ -88,13 +119,17 @@ model ContactMessage {
   isRead    Boolean  @default(false)
   createdAt DateTime @default(now())
 }
+
 model BlogPost {
-  id          String   @id @default(uuid())
-  title       String
-  slug        String   @unique
-  content     String
-  imageUrl    String?
-  published   Boolean @default(false)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id        String   @id @default(uuid())
+  title     String
+  slug      String   @unique
+  content   String
+  imageUrl  String?
+  published Boolean  @default(false)
+  userId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
