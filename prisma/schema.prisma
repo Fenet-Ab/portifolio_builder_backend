@@ -1,0 +1,100 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../node_modules/@prisma/client"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Admin {
+  id        String   @id @default(uuid())
+  name      String
+  email     String   @unique
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Profile {
+  id            String   @id @default(uuid())
+  fullName      String
+  title         String
+  bio           String
+  profileImage  String?
+  resumeUrl     String?
+  location      String?
+  email         String?
+  phone         String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+model Project {
+  id            String   @id @default(uuid())
+  title         String
+  description   String
+  imageUrl      String?
+  githubUrl     String?
+  demoUrl       String?
+  technologies  String[]
+  featured      Boolean  @default(false)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+model Skill {
+  id          String   @id @default(uuid())
+  name        String
+  category    String
+  level       String?
+  icon        String?
+  createdAt   DateTime @default(now())
+}
+model Experience {
+  id          String   @id @default(uuid())
+  company     String
+  role        String
+  description String
+  startDate   DateTime
+  endDate     DateTime?
+  current     Boolean @default(false)
+  createdAt   DateTime @default(now())
+}
+model Certificate {
+  id          String   @id @default(uuid())
+  imageUrl    String?
+  title       String
+  issuer      String
+  issueDate   DateTime
+  certificateUrl String?
+  createdAt   DateTime @default(now())
+}
+model SocialLink {
+  id        String   @id @default(uuid())
+  platform  String
+  url       String
+  icon      String?
+  createdAt DateTime @default(now())
+}
+model ContactMessage {
+  id        String   @id @default(uuid())
+  name      String
+  email     String
+  message   String
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+model BlogPost {
+  id          String   @id @default(uuid())
+  title       String
+  slug        String   @unique
+  content     String
+  imageUrl    String?
+  published   Boolean @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
