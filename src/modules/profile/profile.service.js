@@ -85,23 +85,23 @@ class ProfileService {
 
 
 
-    // async updateProfile(userId, profileData) {
+    async updateProfile(userId, profileData) {
 
 
-    //     const profile = await prisma.profile.update({
+        const profile = await prisma.profile.update({
 
-    //         where: {
-    //             userId
-    //         },
+            where: {
+                userId
+            },
 
-    //         data: profileData
+            data: profileData
 
-    //     });
+        });
 
 
-    //     return profile;
+        return profile;
 
-    // }
+    }
 
 
 
@@ -146,4 +146,11 @@ class ProfileService {
 
 
 
-module.exports = new ProfileService();
+const profileService = new ProfileService();
+
+module.exports = {
+  createProfile: profileService.createProfile.bind(profileService),
+  getMyProfile: profileService.getMyProfile.bind(profileService),
+  updateProfile: profileService.updateProfile.bind(profileService),
+  publishProfile: profileService.publishProfile.bind(profileService),
+};
