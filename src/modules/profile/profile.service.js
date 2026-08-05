@@ -5,29 +5,14 @@ class ProfileService {
 
 
     async createProfile(userId, profileData) {
-
-        const existingProfile = await prisma.profile.findUnique({
-            where: {
-                userId
-            }
-        });
-
-
-        if (existingProfile) {
-            throw new Error("Profile already exists");
-        }
-
-
-        const profile = await prisma.profile.create({
-
-            data: {
+        const profile = await prisma.profile.upsert({
+            where: { userId },
+            update: profileData,
+            create: {
                 ...profileData,
                 userId
             }
-
         });
-
-
         return profile;
     }
 
@@ -86,21 +71,31 @@ class ProfileService {
 
 
     async updateProfile(userId, profileData) {
-
-
-        const profile = await prisma.profile.update({
-
-            where: {
+        const profile = await prisma.profile.upsert({
+            where: { userId },
+            update: profileData,
+            create: {
+                ...profileData,
                 userId
-            },
+            }
+        });
+        return profile;
+    }
 
-            data: profileData
-
+    async deleteProfile(userId) {
+        const existingProfile = await prisma.profile.findUnique({
+            where: { userId }
         });
 
+        if (!existingProfile) {
+            throw new Error("Profile not found");
+        }
 
-        return profile;
+        await prisma.profile.delete({
+            where: { userId }
+        });
 
+        return { message: "Profile deleted successfully" };
     }
 
 
@@ -149,8 +144,9 @@ class ProfileService {
 const profileService = new ProfileService();
 
 module.exports = {
-  createProfile: profileService.createProfile.bind(profileService),
-  getMyProfile: profileService.getMyProfile.bind(profileService),
-  updateProfile: profileService.updateProfile.bind(profileService),
-  publishProfile: profileService.publishProfile.bind(profileService),
+    createProfile: profileService.createProfile.bind(profileService),
+    getMyProfile: profileService.getMyProfile.bind(profileService),
+    updateProfile: profileService.updateProfile.bind(profileService),
+    publishProfile: profileService.publishProfile.bind(profileService),
+    deleteProfile: profileService.deleteProfile.bind(profileService),
 };
